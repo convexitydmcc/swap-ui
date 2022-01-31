@@ -1,37 +1,17 @@
-import { useState } from "react";
-import {
-  PublicKey,
-  Keypair,
-  Transaction,
-  SystemProgram,
-  Signer,
-} from "@solana/web3.js";
-import { Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { BN, Provider } from "@project-serum/anchor";
-import {
-  makeStyles,
-  Card,
-  Button,
-  Typography,
-  TextField,
-  useTheme,
-} from "@material-ui/core";
-import { ExpandMore, ImportExportRounded } from "@material-ui/icons";
-import { useSwapContext, useSwapFair } from "../context/Swap";
-import {
-  useDexContext,
-  useOpenOrders,
-  useRouteVerbose,
-  useMarket,
-  FEE_MULTIPLIER,
-} from "../context/Dex";
-import { useTokenMap } from "../context/TokenList";
-import { useMint, useOwnedTokenAccount } from "../context/Token";
-import { useCanSwap, useReferral } from "../context/Swap";
-import TokenDialog from "./TokenDialog";
-import { SettingsButton } from "./Settings";
-import { InfoLabel } from "./Info";
-import { SOL_MINT, WRAPPED_SOL_MINT } from "../utils/pubkeys";
+import { Button, Card, makeStyles, TextField, Typography, useTheme } from '@material-ui/core';
+import { ImportExportRounded } from '@material-ui/icons';
+import { BN, Provider } from '@project-serum/anchor';
+import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Keypair, PublicKey, Signer, SystemProgram, Transaction } from '@solana/web3.js';
+import { useState } from 'react';
+import { FEE_MULTIPLIER, useDexContext, useMarket, useOpenOrders, useRouteVerbose } from '../context/Dex';
+import { useCanSwap, useReferral, useSwapContext, useSwapFair } from '../context/Swap';
+import { useMint, useOwnedTokenAccount } from '../context/Token';
+import { useTokenMap } from '../context/TokenList';
+import { SOL_MINT, WRAPPED_SOL_MINT } from '../utils/pubkeys';
+import { InfoLabel } from './Info';
+import { SettingsButton } from './Settings';
+import TokenDialog from './TokenDialog';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -95,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
   tokenButton: {
     display: "flex",
     alignItems: "center",
-    cursor: "pointer",
     marginBottom: theme.spacing(1),
   },
 }));
@@ -225,11 +204,11 @@ export function SwapTokenForm({
   return (
     <div className={styles.swapTokenFormContainer} style={style}>
       <div className={styles.swapTokenSelectorContainer}>
-        <TokenButton mint={mint} onClick={() => setShowTokenDialog(true)} />
+        <TokenButton mint={mint} />
         <Typography color="textSecondary" className={styles.balanceContainer}>
           {tokenAccount && mintAccount
             ? `Balance: ${balance?.toFixed(mintAccount.decimals)}`
-            : `-`}
+            : `Balance: -`}
           {from && !!balance ? (
             <span
               className={styles.maxButton}
@@ -261,21 +240,16 @@ export function SwapTokenForm({
   );
 }
 
-function TokenButton({
-  mint,
-  onClick,
-}: {
+function TokenButton({ mint }: {
   mint: PublicKey;
-  onClick: () => void;
 }) {
   const styles = useStyles();
   const theme = useTheme();
 
   return (
-    <div onClick={onClick} className={styles.tokenButton}>
+    <div className={styles.tokenButton}>
       <TokenIcon mint={mint} style={{ width: theme.spacing(4) }} />
       <TokenName mint={mint} style={{ fontSize: 14, fontWeight: 700 }} />
-      <ExpandMore />
     </div>
   );
 }

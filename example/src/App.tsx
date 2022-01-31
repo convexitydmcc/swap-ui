@@ -1,24 +1,15 @@
-import "@fontsource/roboto";
-import { useState, useEffect, useMemo } from "react";
-import { SnackbarProvider, useSnackbar } from "notistack";
-import { Button, Grid, makeStyles } from "@material-ui/core";
-import { Provider } from "@project-serum/anchor";
+import '@fontsource/roboto';
+import { Button, Grid, makeStyles } from '@material-ui/core';
+import { Provider } from '@project-serum/anchor';
 // @ts-ignore
-import Wallet from "@project-serum/sol-wallet-adapter";
-import {
-  Signer,
-  ConfirmOptions,
-  Connection,
-  Transaction,
-  TransactionSignature,
-  PublicKey,
-} from "@solana/web3.js";
-import {
-  TokenListContainer,
-  TokenListProvider,
-} from "@solana/spl-token-registry";
-import Swap from "@project-serum/swap-ui";
-import "./App.css";
+import Wallet from '@project-serum/sol-wallet-adapter';
+import Swap from '@project-serum/swap-ui';
+import { TokenListContainer } from '@solana/spl-token-registry';
+import { ConfirmOptions, Connection, PublicKey, Signer, Transaction, TransactionSignature } from '@solana/web3.js';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import { useEffect, useMemo, useState } from 'react';
+import './App.css';
+import { lstarCoin, usdcCoin } from './tokens';
 
 // App illustrating the use of the Swap component.
 //
@@ -85,7 +76,12 @@ function AppInner() {
   }, [enqueueSnackbar]);
 
   useEffect(() => {
-    new TokenListProvider().resolve().then(setTokenList);
+    const container = new TokenListContainer([
+      lstarCoin,
+      usdcCoin,
+    ]);
+
+    setTokenList(container);
   }, [setTokenList]);
 
   // Connect to the wallet.
@@ -114,7 +110,13 @@ function AppInner() {
       >
         {!isConnected ? "Connect" : "Disconnect"}
       </Button>
-      {tokenList && <Swap provider={provider} tokenList={tokenList} />}
+      {tokenList && (
+        <Swap
+          provider={provider}
+          tokenList={tokenList}
+          fromMint={new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')}
+          toMint={new PublicKey('C6qep3y7tCZUJYDXHiwuK46Gt6FsoxLi8qV1bTCRYaY1')}
+        />)}
     </Grid>
   );
 }
