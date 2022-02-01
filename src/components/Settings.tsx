@@ -1,21 +1,12 @@
-import { useState } from "react";
-import {
-  makeStyles,
-  Popover,
-  IconButton,
-  Typography,
-  Button,
-  TextField,
-  InputAdornment,
-  Switch,
-  FormControlLabel,
-  FormGroup,
-} from "@material-ui/core";
-import { SettingsOutlined as Settings } from "@material-ui/icons";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import { useSwapContext, useSwapFair } from "../context/Swap";
-import { useDexContext } from "../context/Dex";
-import OpenOrdersDialog from "./OpenOrdersDialog";
+import { FormControlLabel, FormGroup, IconButton, InputAdornment, makeStyles, Popover, Switch, TextField, Typography } from '@material-ui/core';
+import { SettingsOutlined as Settings } from '@material-ui/icons';
+import PopupState, { bindPopover, bindTrigger } from 'material-ui-popup-state';
+import { useState } from 'react';
+import { useDexContext } from '../context/Dex';
+import { useSwapContext, useSwapFair } from '../context/Swap';
+import OpenOrdersDialog from './OpenOrdersDialog';
+import { Button } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 
 const useStyles = makeStyles((theme) => ({
   tab: {
@@ -144,8 +135,9 @@ function SettingsDetails() {
               disabled={fairOverride === null}
             />
             <Button
-              component="div"
-              variant="contained"
+              type="primary"
+              shape="round"
+              size="middle"
               onClick={() => {
                 if (fair === undefined) {
                   console.error("Fair is undefined");
@@ -157,11 +149,6 @@ function SettingsDetails() {
                   setFairOverride(null);
                 }
               }}
-              className={
-                fairOverride === null
-                  ? styles.fairAutoSelected
-                  : styles.fairAuto
-              }
             >
               Auto
             </Button>
@@ -171,8 +158,9 @@ function SettingsDetails() {
           <CloseNewAccountsSwitch />
         </div>
         <Button
-          variant="contained"
-          fullWidth
+          type="default"
+          size="middle"
+          shape="round"
           disabled={swapClient.program.provider.wallet.publicKey === null}
           onClick={() => setShowSettingsDialog(true)}
         >

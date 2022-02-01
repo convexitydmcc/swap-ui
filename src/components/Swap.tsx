@@ -1,4 +1,4 @@
-import { Button, Card, makeStyles, TextField, Typography, useTheme } from '@material-ui/core';
+import { Card, makeStyles, TextField, Typography, useTheme } from '@material-ui/core';
 import { ImportExportRounded } from '@material-ui/icons';
 import { BN, Provider } from '@project-serum/anchor';
 import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
@@ -12,6 +12,7 @@ import { SOL_MINT, WRAPPED_SOL_MINT } from '../utils/pubkeys';
 import { InfoLabel } from './Info';
 import { SettingsButton } from './Settings';
 import TokenDialog from './TokenDialog';
+import { Button } from 'antd';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -321,106 +322,118 @@ export function SwapButton() {
   const quoteMint = fromMarket && fromMarket.quoteMintAddress;
   const quoteMintInfo = useMint(quoteMint);
   const quoteWallet = useOwnedTokenAccount(quoteMint);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Click handler.
   const sendSwapTransaction = async () => {
-    if (!fromMintInfo || !toMintInfo) {
-      throw new Error("Unable to calculate mint decimals");
-    }
-    if (!fair) {
-      throw new Error("Invalid fair");
-    }
-    if (!quoteMint || !quoteMintInfo) {
-      throw new Error("Quote mint not found");
-    }
-
-    const amount = new BN(fromAmount * 10 ** fromMintInfo.decimals);
-    const isSol = fromMint.equals(SOL_MINT) || toMint.equals(SOL_MINT);
-    const wrappedSolAccount = isSol ? Keypair.generate() : undefined;
-
-    // Build the swap.
-    let txs = await (async () => {
-      if (!fromMarket) {
-        throw new Error("Market undefined");
+    setIsLoading(true);
+    try {
+      if (!fromMintInfo || !toMintInfo) {
+        throw new Error("Unable to calculate mint decimals");
+      }
+      if (!fair) {
+        throw new Error("Invalid fair");
+      }
+      if (!quoteMint || !quoteMintInfo) {
+        throw new Error("Quote mint not found");
       }
 
-      const minExchangeRate = {
-        rate: new BN((10 ** toMintInfo.decimals * FEE_MULTIPLIER) / fair)
-          .muln(100 - slippage)
-          .divn(100),
-        fromDecimals: fromMintInfo.decimals,
-        quoteDecimals: quoteMintInfo.decimals,
-        strict: isStrict,
-      };
-      const fromOpenOrders = fromMarket
-        ? openOrders.get(fromMarket?.address.toString())
-        : undefined;
-      const toOpenOrders = toMarket
-        ? openOrders.get(toMarket?.address.toString())
-        : undefined;
-      const fromWalletAddr = fromMint.equals(SOL_MINT)
-        ? wrappedSolAccount!.publicKey
-        : fromWallet
-        ? fromWallet.publicKey
-        : undefined;
-      const toWalletAddr = toMint.equals(SOL_MINT)
-        ? wrappedSolAccount!.publicKey
-        : toWallet
-        ? toWallet.publicKey
-        : undefined;
+      const amount = new BN(fromAmount * 10 ** fromMintInfo.decimals);
+      const isSol = fromMint.equals(SOL_MINT) || toMint.equals(SOL_MINT);
+      const wrappedSolAccount = isSol ? Keypair.generate() : undefined;
 
-      return await swapClient.swapTxs({
-        fromMint,
-        toMint,
-        quoteMint,
-        amount,
-        minExchangeRate,
-        referral,
-        fromMarket,
-        toMarket,
-        // Automatically created if undefined.
-        fromOpenOrders: fromOpenOrders ? fromOpenOrders[0].address : undefined,
-        toOpenOrders: toOpenOrders ? toOpenOrders[0].address : undefined,
-        fromWallet: fromWalletAddr,
-        toWallet: toWalletAddr,
-        quoteWallet: quoteWallet ? quoteWallet.publicKey : undefined,
-        // Auto close newly created open orders accounts.
-        close: isClosingNewAccounts,
-      });
-    })();
+      // Build the swap.
+      let txs = await (async () => {
+        if (!fromMarket) {
+          throw new Error("Market undefined");
+        }
 
-    // If swapping SOL, then insert a wrap/unwrap instruction.
-    if (isSol) {
-      if (txs.length > 1) {
-        throw new Error("SOL must be swapped in a single transaction");
+        const minExchangeRate = {
+          rate: new BN((10 ** toMintInfo.decimals * FEE_MULTIPLIER) / fair)
+            .muln(100 - slippage)
+            .divn(100),
+          fromDecimals: fromMintInfo.decimals,
+          quoteDecimals: quoteMintInfo.decimals,
+          strict: isStrict,
+        };
+        const fromOpenOrders = fromMarket
+          ? openOrders.get(fromMarket?.address.toString())
+          : undefined;
+        const toOpenOrders = toMarket
+          ? openOrders.get(toMarket?.address.toString())
+          : undefined;
+        const fromWalletAddr = fromMint.equals(SOL_MINT)
+          ? wrappedSolAccount!.publicKey
+          : fromWallet
+            ? fromWallet.publicKey
+            : undefined;
+        const toWalletAddr = toMint.equals(SOL_MINT)
+          ? wrappedSolAccount!.publicKey
+          : toWallet
+            ? toWallet.publicKey
+            : undefined;
+
+        return await swapClient.swapTxs({
+          fromMint,
+          toMint,
+          quoteMint,
+          amount,
+          minExchangeRate,
+          referral,
+          fromMarket,
+          toMarket,
+          // Automatically created if undefined.
+          fromOpenOrders: fromOpenOrders ? fromOpenOrders[0].address : undefined,
+          toOpenOrders: toOpenOrders ? toOpenOrders[0].address : undefined,
+          fromWallet: fromWalletAddr,
+          toWallet: toWalletAddr,
+          quoteWallet: quoteWallet ? quoteWallet.publicKey : undefined,
+          // Auto close newly created open orders accounts.
+          close: isClosingNewAccounts,
+        });
+      })();
+
+      // If swapping SOL, then insert a wrap/unwrap instruction.
+      if (isSol) {
+        if (txs.length > 1) {
+          throw new Error("SOL must be swapped in a single transaction");
+        }
+        const { tx: wrapTx, signers: wrapSigners } = await wrapSol(
+          swapClient.program.provider,
+          wrappedSolAccount as Keypair,
+          fromMint,
+          amount
+        );
+        const { tx: unwrapTx, signers: unwrapSigners } = unwrapSol(
+          swapClient.program.provider,
+          wrappedSolAccount as Keypair
+        );
+        const tx = new Transaction();
+        tx.add(wrapTx);
+        tx.add(txs[0].tx);
+        tx.add(unwrapTx);
+        txs[0].tx = tx;
+        txs[0].signers.push(...wrapSigners);
+        txs[0].signers.push(...unwrapSigners);
       }
-      const { tx: wrapTx, signers: wrapSigners } = await wrapSol(
-        swapClient.program.provider,
-        wrappedSolAccount as Keypair,
-        fromMint,
-        amount
-      );
-      const { tx: unwrapTx, signers: unwrapSigners } = unwrapSol(
-        swapClient.program.provider,
-        wrappedSolAccount as Keypair
-      );
-      const tx = new Transaction();
-      tx.add(wrapTx);
-      tx.add(txs[0].tx);
-      tx.add(unwrapTx);
-      txs[0].tx = tx;
-      txs[0].signers.push(...wrapSigners);
-      txs[0].signers.push(...unwrapSigners);
-    }
 
-    await swapClient.program.provider.sendAll(txs);
+      await swapClient.program.provider.sendAll(txs);
+    } catch (e) {
+      console.log('Swap error:', e);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <Button
-      variant="contained"
+      type="primary"
+      shape="round"
+      size="large"
+      loading={isLoading}
       className={styles.swapButton}
       onClick={sendSwapTransaction}
-      disabled={!canSwap}
+      disabled={!canSwap || isLoading}
     >
       Swap
     </Button>
