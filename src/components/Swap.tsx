@@ -29,12 +29,6 @@ const useStyles = makeStyles((theme) => ({
   },
   swapButton: {
     width: "100%",
-    borderRadius: theme.spacing(2),
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-    fontSize: 16,
-    fontWeight: 700,
-    padding: theme.spacing(1.5),
   },
   swapToFromButton: {
     display: "block",
