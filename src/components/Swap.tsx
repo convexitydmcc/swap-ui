@@ -299,6 +299,7 @@ export function SwapButton() {
     fromMint,
     toMint,
     fromAmount,
+    setFromAmount,
     slippage,
     isClosingNewAccounts,
     isStrict,
@@ -323,6 +324,7 @@ export function SwapButton() {
   const quoteMintInfo = useMint(quoteMint);
   const quoteWallet = useOwnedTokenAccount(quoteMint);
   const [isLoading, setIsLoading] = useState(false);
+
 
   // Click handler.
   const sendSwapTransaction = async () => {
@@ -418,6 +420,7 @@ export function SwapButton() {
       }
 
       await swapClient.program.provider.sendAll(txs);
+      setFromAmount(0);
     } catch (e) {
       console.log('Swap error:', e);
       throw e;
