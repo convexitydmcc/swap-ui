@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     textAlign: "right",
+    flexGrow: 1,
   },
   swapTokenFormContainer: {
     borderRadius: theme.spacing(2),
@@ -183,18 +184,16 @@ export function SwapTokenForm({
   const tokenAccount = useOwnedTokenAccount(mint);
   const mintAccount = useMint(mint);
 
-  const balance =
-    tokenAccount &&
-    mintAccount &&
-    tokenAccount.account.amount.toNumber() / 10 ** mintAccount.decimals;
+  const balance = tokenAccount && mintAccount
+    ? tokenAccount.account.amount.toNumber() / 10 ** mintAccount.decimals
+    : 0;
 
-  const formattedAmount =
-    mintAccount && amount
-      ? amount.toLocaleString("fullwide", {
-          maximumFractionDigits: mintAccount.decimals,
-          useGrouping: false,
-        })
-      : amount;
+  const formattedAmount = mintAccount && amount
+    ? amount.toLocaleString("fullwide", {
+        maximumFractionDigits: mintAccount.decimals,
+        useGrouping: false,
+      })
+    : amount;
 
   return (
     <div className={styles.swapTokenFormContainer} style={style}>
@@ -223,6 +222,10 @@ export function SwapTokenForm({
           classes: {
             root: styles.amountInput,
             input: styles.input,
+          },
+          inputProps: {
+            min: 0,
+            max: balance,
           },
         }}
       />

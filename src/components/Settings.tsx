@@ -6,7 +6,6 @@ import { useDexContext } from '../context/Dex';
 import { useSwapContext, useSwapFair } from '../context/Swap';
 import OpenOrdersDialog from './OpenOrdersDialog';
 import { Button } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
 
 const useStyles = makeStyles((theme) => ({
   tab: {
