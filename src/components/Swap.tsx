@@ -3,7 +3,7 @@ import { ImportExportRounded } from '@material-ui/icons';
 import { BN, Provider } from '@project-serum/anchor';
 import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Keypair, PublicKey, Signer, SystemProgram, Transaction } from '@solana/web3.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FEE_MULTIPLIER, useDexContext, useMarket, useOpenOrders, useRouteVerbose } from '../context/Dex';
 import { useCanSwap, useReferral, useSwapContext, useSwapFair } from '../context/Swap';
 import { useMint, useOwnedTokenAccount } from '../context/Token';

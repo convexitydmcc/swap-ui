@@ -1,26 +1,13 @@
-import * as assert from "assert";
-import React, { useContext, useState, useEffect } from "react";
-import { useAsync } from "react-async-hook";
-import { PublicKey } from "@solana/web3.js";
-import {
-  Token,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import { Market } from "@project-serum/serum";
-import { SRM_MINT, USDC_MINT, USDT_MINT } from "../utils/pubkeys";
-import {
-  useFairRoute,
-  useRouteVerbose,
-  useDexContext,
-  FEE_MULTIPLIER,
-} from "./Dex";
-import {
-  useTokenListContext,
-  SPL_REGISTRY_SOLLET_TAG,
-  SPL_REGISTRY_WORM_TAG,
-} from "./TokenList";
-import { useOwnedTokenAccount } from "../context/Token";
+import { Market } from '@project-serum/serum';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { PublicKey } from '@solana/web3.js';
+import * as assert from 'assert';
+import React, { useContext, useEffect, useState } from 'react';
+import { useAsync } from 'react-async-hook';
+import { SRM_MINT, USDC_MINT, USDT_MINT } from '../utils/pubkeys';
+import { FEE_MULTIPLIER, useDexContext, useFairRoute, useRouteVerbose } from './Dex';
+import { useMint, useOwnedTokenAccount } from './Token';
+import { SPL_REGISTRY_SOLLET_TAG, SPL_REGISTRY_WORM_TAG, useTokenListContext } from './TokenList';
 
 const DEFAULT_SLIPPAGE_PERCENT = 0.5;
 
@@ -75,7 +62,15 @@ export type SwapContext = {
 };
 const _SwapContext = React.createContext<null | SwapContext>(null);
 
-export function SwapContextProvider(props: any) {
+export function SwapContextProvider(props: {
+  fromMint?: PublicKey;
+  toMint?: PublicKey;
+  fromAmount?: number;
+  toAmount?: number;
+  referral?: PublicKey;
+  isAutoMax?: boolean;
+  children: any;
+}) {
   const [fromMint, setFromMint] = useState(props.fromMint ?? SRM_MINT);
   const [toMint, setToMint] = useState(props.toMint ?? USDC_MINT);
   const [fromAmount, _setFromAmount] = useState(props.fromAmount ?? 0);
@@ -85,16 +80,26 @@ export function SwapContextProvider(props: any) {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE_PERCENT);
   const [fairOverride, setFairOverride] = useState<number | null>(null);
   const fair = _useSwapFair(fromMint, toMint, fairOverride);
+  const tokenAccount = useOwnedTokenAccount(fromMint);
+  const mintAccount = useMint(fromMint);
+  const [isAutoMaxApplied, setIsAutoMaxApplied] = useState(!props.isAutoMax);
+
   const referral = props.referral;
 
   assert.ok(slippage >= 0);
 
   useEffect(() => {
-    if (!fair) {
+    if (!fair || !fromMint || !tokenAccount || !mintAccount) {
       return;
     }
-    setFromAmount(fromAmount);
-  }, [fair]);
+    let balance = fromAmount;
+    if (props.isAutoMax && !isAutoMaxApplied) {
+      // apply MAX value
+      setIsAutoMaxApplied(true);
+      balance = tokenAccount.account.amount.toNumber() / 10 ** mintAccount.decimals;
+    }
+    setFromAmount(balance);
+  }, [fair, fromMint, tokenAccount, mintAccount, fromAmount, isAutoMaxApplied, props.isAutoMax]);
 
   const swapToFromMints = () => {
     const oldFrom = fromMint;

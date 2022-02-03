@@ -114,8 +114,9 @@ function AppInner() {
         <Swap
           provider={provider}
           tokenList={tokenList}
-          fromMint={new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')}
-          toMint={new PublicKey('C6qep3y7tCZUJYDXHiwuK46Gt6FsoxLi8qV1bTCRYaY1')}
+          toMint={new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')}
+          fromMint={new PublicKey('C6qep3y7tCZUJYDXHiwuK46Gt6FsoxLi8qV1bTCRYaY1')}
+          isAutoMax
         />)}
     </Grid>
   );

@@ -1,33 +1,16 @@
-import { ReactElement } from "react";
-import { PublicKey } from "@solana/web3.js";
-import { TokenListContainer } from "@solana/spl-token-registry";
-import { Provider } from "@project-serum/anchor";
-import { Swap as SwapClient } from "@project-serum/swap";
-import {
-  createMuiTheme,
-  ThemeOptions,
-  ThemeProvider,
-} from "@material-ui/core/styles";
-import {
-  SwapContextProvider,
-  useSwapContext,
-  useSwapFair,
-} from "./context/Swap";
-import {
-  DexContextProvider,
-  useBbo,
-  useFairRoute,
-  useMarketName,
-} from "./context/Dex";
-import { TokenListContextProvider, useTokenMap } from "./context/TokenList";
-import { TokenContextProvider, useMint } from "./context/Token";
-import SwapCard, {
-  ArrowButton,
-  SwapButton,
-  SwapHeader,
-  SwapTokenForm,
-} from "./components/Swap";
-import TokenDialog from "./components/TokenDialog";
+import { createTheme } from '@material-ui/core';
+import { ThemeOptions, ThemeProvider } from '@material-ui/core/styles';
+import { Provider } from '@project-serum/anchor';
+import { Swap as SwapClient } from '@project-serum/swap';
+import { TokenListContainer } from '@solana/spl-token-registry';
+import { PublicKey } from '@solana/web3.js';
+import { ReactElement } from 'react';
+import SwapCard, { ArrowButton, SwapButton, SwapHeader, SwapTokenForm } from './components/Swap';
+import TokenDialog from './components/TokenDialog';
+import { DexContextProvider, useBbo, useFairRoute, useMarketName } from './context/Dex';
+import { SwapContextProvider, useSwapContext, useSwapFair } from './context/Swap';
+import { TokenContextProvider, useMint } from './context/Token';
+import { TokenListContextProvider, useTokenMap } from './context/TokenList';
 
 /**
  * A`Swap` component that can be embedded into applications. To use,
@@ -57,11 +40,12 @@ export default function Swap(props: SwapProps): ReactElement {
     fromAmount,
     toAmount,
     referral,
+    isAutoMax,
   } = props;
 
   // @ts-ignore
   const swapClient = new SwapClient(provider, tokenList);
-  const theme = createMuiTheme(
+  const theme = createTheme(
     materialTheme || {
       palette: {
         primary: {
@@ -78,6 +62,7 @@ export default function Swap(props: SwapProps): ReactElement {
       },
     }
   );
+
   return (
     <ThemeProvider theme={theme}>
       <TokenListContextProvider tokenList={tokenList}>
@@ -89,6 +74,7 @@ export default function Swap(props: SwapProps): ReactElement {
               fromAmount={fromAmount}
               toAmount={toAmount}
               referral={referral}
+              isAutoMax={isAutoMax}
             >
               <SwapCard
                 containerStyle={containerStyle}
@@ -167,6 +153,10 @@ export type SwapProps = {
    * Styling properties for the from and to token containers.
    */
   swapTokenContainerStyle?: any;
+  /**
+   * set MAX amount on open
+   */
+  isAutoMax?: boolean;
 };
 
 export {
