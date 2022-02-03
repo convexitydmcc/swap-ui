@@ -171,7 +171,7 @@ function MarketRoute({ market }: { market: PublicKey }) {
         {marketName}
       </Link>
       <code style={{ marginLeft: "10px" }}>
-        {bbo && bbo.mid ? bbo.mid.toFixed(6) : "-"}
+        {bbo?.bestBid || "-"}
       </code>
     </div>
   );
