@@ -9,7 +9,7 @@ import { FEE_MULTIPLIER, useDexContext, useFairRoute, useRouteVerbose } from './
 import { useMint, useOwnedTokenAccount } from './Token';
 import { SPL_REGISTRY_SOLLET_TAG, SPL_REGISTRY_WORM_TAG, useTokenListContext } from './TokenList';
 
-const DEFAULT_SLIPPAGE_PERCENT = 0.5;
+const DEFAULT_SLIPPAGE_PERCENT = 1;
 
 export type SwapContext = {
   // Mint being traded from. The user must own these tokens.
