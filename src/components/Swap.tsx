@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     margin: "10px auto 10px auto",
     cursor: "pointer",
   },
+  textField: {
+    flexGrow: 1,
+  },
   amountInput: {
     fontSize: 22,
     fontWeight: 600,
@@ -214,6 +217,7 @@ export function SwapTokenForm({
         </Typography>
       </div>
       <TextField
+        className={styles.textField}
         type="number"
         value={formattedAmount}
         onChange={(e) => setAmount(parseFloat(e.target.value))}
