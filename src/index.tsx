@@ -11,6 +11,7 @@ import { DexContextProvider, useBbo, useFairRoute, useMarketName } from './conte
 import { SwapContextProvider, useSwapContext, useSwapFair } from './context/Swap';
 import { TokenContextProvider, useMint } from './context/Token';
 import { TokenListContextProvider, useTokenMap } from './context/TokenList';
+import { getTokenBid } from './utils/rate';
 
 /**
  * A`Swap` component that can be embedded into applications. To use,
@@ -184,4 +185,6 @@ export {
   useFairRoute,
   useMarketName,
   useBbo,
+  // Rate
+  getTokenBid,
 };
