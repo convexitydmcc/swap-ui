@@ -1532,9 +1532,9 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@material-ui/core@^4.12.3":
+"@material-ui/core@4.12.3":
   version "4.12.3"
-  resolved "https://registry.npmjs.org/@material-ui/core/-/core-4.12.3.tgz"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.12.3.tgz#80d665caf0f1f034e52355c5450c0e38b099d3ca"
   integrity sha512-sdpgI/PL56QVsEJldwEe4FFaFTLUqN+rd7sSZiRCdx2E/C7z5yK0y/khAWVBH24tXwto7I1hCzNWfJGZIYJKnw==
   dependencies:
     "@babel/runtime" "^7.4.4"
@@ -1550,9 +1550,9 @@
     react-is "^16.8.0 || ^17.0.0"
     react-transition-group "^4.4.0"
 
-"@material-ui/icons@^4.11.2":
+"@material-ui/icons@4.11.2":
   version "4.11.2"
-  resolved "https://registry.npmjs.org/@material-ui/icons/-/icons-4.11.2.tgz"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.11.2.tgz#b3a7353266519cd743b6461ae9fdfcb1b25eb4c5"
   integrity sha512-fQNsKX2TxBmqIGJCSi3tGTO/gZ+eJgWmMJkgDiOfyNaunNaxcklJQFaFogYcFl0qFuaEz1qaXYXboa/bUXVSOQ==
   dependencies:
     "@babel/runtime" "^7.4.4"
@@ -7882,9 +7882,9 @@ marked@^3.0.2:
   resolved "https://registry.npmjs.org/marked/-/marked-3.0.2.tgz"
   integrity sha512-TMJQQ79Z0e3rJYazY0tIoMsFzteUGw9fB3FD+gzuIT3zLuG9L9ckIvUfF51apdJkcqc208jJN2KbtPbOvXtbjA==
 
-material-ui-popup-state@^1.9.3:
+material-ui-popup-state@1.9.3:
   version "1.9.3"
-  resolved "https://registry.npmjs.org/material-ui-popup-state/-/material-ui-popup-state-1.9.3.tgz"
+  resolved "https://registry.yarnpkg.com/material-ui-popup-state/-/material-ui-popup-state-1.9.3.tgz#133ee02be8adf936e738d6b5f3dc89726af39bce"
   integrity sha512-+Ete5Tzw5rXlYfmqptOS8kBUH8vnK5OJsd6IQ7SHtLjU0PsvsmM73M/k8ot0xkX4RmPGuNRsFbK3mlCe/ClQuw==
   dependencies:
     "@babel/runtime" "^7.12.5"
@@ -10233,9 +10233,9 @@ react-app-rewired@^2.1.8:
   dependencies:
     semver "^5.6.0"
 
-react-async-hook@^3.6.2:
+react-async-hook@3.6.2:
   version "3.6.2"
-  resolved "https://registry.npmjs.org/react-async-hook/-/react-async-hook-3.6.2.tgz"
+  resolved "https://registry.yarnpkg.com/react-async-hook/-/react-async-hook-3.6.2.tgz#360018e5cd6ecc8841152a79875841b9e49dbdba"
   integrity sha512-RkwHCJ8V7I6umKZLHneapuTRWf+eO4LOj0qUwUDsSn27jrAOcW6ClbV3x22Z4hVxH9bA0zb7y+ozDJDJ8PnZoA==
 
 react-dev-utils@^11.0.3:
