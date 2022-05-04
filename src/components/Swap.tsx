@@ -192,10 +192,7 @@ export function SwapTokenForm({
     : 0;
 
   const formattedAmount = mintAccount && amount
-    ? amount.toLocaleString("fullwide", {
-        maximumFractionDigits: mintAccount.decimals,
-        useGrouping: false,
-      })
+    ? Number(amount.toFixed(mintAccount.decimals))
     : amount;
 
   return (
