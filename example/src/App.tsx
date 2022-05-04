@@ -44,7 +44,10 @@ function AppInner() {
     };
     const network = "https://solana-api.projectserum.com";
     const wallet = new Wallet("https://www.sollet.io", network);
-    const connection = new Connection(network, opts.preflightCommitment);
+    const connection = new Connection(network, {
+      commitment: opts.preflightCommitment,
+      confirmTransactionInitialTimeout: 200000,
+    });
     const provider = new NotifyingProvider(
       connection,
       wallet,

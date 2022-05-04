@@ -302,10 +302,9 @@ export function SwapButton() {
     isClosingNewAccounts,
     isStrict,
   } = useSwapContext();
-  const { swapClient } = useDexContext();
+  const { swapClient, isLoading: isDexLoading, openOrders } = useDexContext();
   const fromMintInfo = useMint(fromMint);
   const toMintInfo = useMint(toMint);
-  const openOrders = useOpenOrders();
   const route = useRouteVerbose(fromMint, toMint);
   const fromMarket = useMarket(
     route && route.markets ? route.markets[0] : undefined
@@ -431,12 +430,12 @@ export function SwapButton() {
       type="primary"
       shape="round"
       size="large"
-      loading={isLoading}
+      loading={isLoading || isDexLoading}
       className={styles.swapButton}
       onClick={sendSwapTransaction}
-      disabled={!canSwap || isLoading}
+      disabled={!canSwap || isLoading || isDexLoading}
     >
-      Swap
+      {isDexLoading ? 'Loading' : 'Swap'}
     </Button>
   );
 }
