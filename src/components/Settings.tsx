@@ -2,6 +2,7 @@ import { FormControlLabel, FormGroup, IconButton, InputAdornment, makeStyles, Po
 import { SettingsOutlined as Settings } from '@material-ui/icons';
 import PopupState, { bindPopover, bindTrigger } from 'material-ui-popup-state';
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useDexContext } from '../context/Dex';
 import { useSwapContext, useSwapFair } from '../context/Swap';
 import OpenOrdersDialog from './OpenOrdersDialog';
@@ -79,6 +80,7 @@ export function SettingsButton() {
 }
 
 function SettingsDetails() {
+  const intl = useIntl();
   const styles = useStyles();
 
   const { slippage, setSlippage, fairOverride, setFairOverride } =
@@ -93,15 +95,17 @@ function SettingsDetails() {
 
   return (
     <div style={{ padding: "15px", width: "305px" }}>
-      <Typography style={{ fontWeight: "bold" }}>Settings</Typography>
+      <Typography style={{ fontWeight: "bold" }}>
+        <FormattedMessage id="Swap.settings.title" />
+      </Typography>
       <div>
         <div style={{ marginTop: "10px" }}>
           <Typography color="textSecondary" style={{ fontSize: "12px" }}>
-            Slippage tolerance
+            <FormattedMessage id="Swap.settings.tolerance.title" />
           </Typography>
           <TextField
             type="number"
-            placeholder="Error tolerance percentage"
+            placeholder={intl.formatMessage({ id: 'Swap.settings.tolerance.placeholder' })}
             value={slippage}
             onChange={(e) => setSlippageHandler(parseFloat(e.target.value))}
             style={{
@@ -116,12 +120,12 @@ function SettingsDetails() {
         </div>
         <div style={{ marginTop: "10px" }}>
           <Typography color="textSecondary" style={{ fontSize: "12px" }}>
-            Fair price
+            <FormattedMessage id="Swap.settings.fairPrice.title" />
           </Typography>
           <div style={{ display: "flex" }}>
             <TextField
               type="number"
-              placeholder="Fair price override"
+              placeholder={intl.formatMessage({ id: 'Swap.settings.fairPrice.placeholder' })}
               value={fair}
               onChange={(e) => setFairOverride(parseFloat(e.target.value))}
               style={{
@@ -149,7 +153,7 @@ function SettingsDetails() {
                 }
               }}
             >
-              Auto
+              <FormattedMessage id="Swap.settings.fairPrice.auto" />
             </Button>
           </div>
         </div>
@@ -163,7 +167,7 @@ function SettingsDetails() {
           disabled={swapClient.program.provider.wallet.publicKey === null}
           onClick={() => setShowSettingsDialog(true)}
         >
-          Manage Dex Accounts
+          <FormattedMessage id="Swap.action.manage" />
         </Button>
       </div>
       <OpenOrdersDialog
