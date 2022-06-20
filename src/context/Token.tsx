@@ -59,7 +59,14 @@ export function TokenContextProvider(props: any) {
         }
       });
   }, [provider.wallet.publicKey, provider.connection]);
-
+  
+  useEffect(() => {
+    // clear cache when destroy
+    return () => {
+      _OWNED_TOKEN_ACCOUNTS_CACHE = [];
+    };
+  }, []);
+  
   return (
     <_TokenContext.Provider
       value={{
@@ -195,7 +202,7 @@ export function setMintCache(pk: PublicKey, account: MintInfo) {
 }
 
 // Cache storing all token accounts for the connected wallet provider.
-const _OWNED_TOKEN_ACCOUNTS_CACHE: Array<{
+let _OWNED_TOKEN_ACCOUNTS_CACHE: Array<{
   publicKey: PublicKey;
   account: TokenAccount;
 }> = [];
