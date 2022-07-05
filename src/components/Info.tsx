@@ -1,17 +1,12 @@
-import {
-  makeStyles,
-  Typography,
-  Link,
-  Popover,
-  IconButton,
-} from "@material-ui/core";
-import { Info } from "@material-ui/icons";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
-import { PublicKey } from "@solana/web3.js";
-import { useTokenMap } from "../context/TokenList";
-import { useSwapContext, useSwapFair } from "../context/Swap";
-import { useMint } from "../context/Token";
-import { useRoute, useMarketName, useBbo } from "../context/Dex";
+import { IconButton, Link, makeStyles, Popover, Typography } from '@material-ui/core';
+import { Info } from '@material-ui/icons';
+import { PublicKey } from '@solana/web3.js';
+import PopupState, { bindPopover, bindTrigger } from 'material-ui-popup-state';
+import { FormattedMessage } from 'react-intl';
+import { useBbo, useMarketName, useRoute } from '../context/Dex';
+import { useSwapContext, useSwapFair } from '../context/Swap';
+import { useMint } from '../context/Token';
+import { useTokenMap } from '../context/TokenList';
 
 const useStyles = makeStyles(() => ({
   infoLabel: {
@@ -107,14 +102,16 @@ function InfoDetails() {
           color="textSecondary"
           style={{ fontWeight: "bold", marginBottom: "5px" }}
         >
-          Trade Route
+          <FormattedMessage id="Swap.info.tradeRoute" />
         </Typography>
         {route ? (
           route.map((market: PublicKey) => {
             return <MarketRoute key={market.toString()} market={market} />;
           })
         ) : (
-          <Typography color="textSecondary">Route not found</Typography>
+          <Typography color="textSecondary">
+            <FormattedMessage id="Swap.info.routeNotFound" />
+          </Typography>
         )}
       </div>
       <div style={{ marginTop: "15px" }}>
@@ -122,7 +119,7 @@ function InfoDetails() {
           color="textSecondary"
           style={{ fontWeight: "bold", marginBottom: "5px" }}
         >
-          Tokens
+          <FormattedMessage id="Swap.info.tokens" />
         </Typography>
         {addresses.map((address) => {
           return (

@@ -4,6 +4,7 @@ import { BN, Provider } from '@project-serum/anchor';
 import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Keypair, PublicKey, Signer, SystemProgram, Transaction } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { FEE_MULTIPLIER, useDexContext, useMarket, useOpenOrders, useRouteVerbose } from '../context/Dex';
 import { useCanSwap, useReferral, useSwapContext, useSwapFair } from '../context/Swap';
 import { useMint, useOwnedTokenAccount } from '../context/Token';
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
     fontSize: "12px",
     cursor: "pointer",
+    textTransform: 'uppercase',
   },
   tokenButton: {
     display: "flex",
@@ -200,15 +202,17 @@ export function SwapTokenForm({
       <div className={styles.swapTokenSelectorContainer}>
         <TokenButton mint={mint} />
         <Typography color="textSecondary" className={styles.balanceContainer}>
-          {tokenAccount && mintAccount
-            ? `Balance: ${balance?.toFixed(mintAccount.decimals)}`
-            : `Balance: -`}
+          <FormattedMessage id="Swap.balance" values={{
+            amount: tokenAccount && mintAccount
+              ? balance?.toFixed(mintAccount.decimals)
+              : '-'
+          }} />
           {from && !!balance ? (
             <span
               className={styles.maxButton}
               onClick={() => setAmount(balance)}
             >
-              MAX
+              <FormattedMessage id="Swap.max" />
             </span>
           ) : null}
         </Typography>
@@ -435,7 +439,7 @@ export function SwapButton() {
       onClick={sendSwapTransaction}
       disabled={!canSwap || isLoading || isDexLoading}
     >
-      {isDexLoading ? 'Loading' : 'Swap'}
+      <FormattedMessage id={isDexLoading ? 'Swap.loading' : 'Swap.action.swap'} />
     </Button>
   );
 }

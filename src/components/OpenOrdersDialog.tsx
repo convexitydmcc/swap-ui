@@ -1,31 +1,15 @@
-import { useState, useMemo, useEffect } from "react";
-import { PublicKey } from "@solana/web3.js";
-import { MintInfo } from "@solana/spl-token";
-import { BN } from "@project-serum/anchor";
-import { OpenOrders } from "@project-serum/serum";
-import {
-  makeStyles,
-  Dialog,
-  DialogContent,
-  Paper,
-  Table,
-  TableRow,
-  TableHead,
-  TableCell,
-  TableBody,
-  TableContainer,
-  IconButton,
-  Typography,
-  Button,
-  Select,
-  MenuItem,
-  Link,
-} from "@material-ui/core";
-import { Close } from "@material-ui/icons";
-import { useMarket, useOpenOrders, useDexContext } from "../context/Dex";
-import { useTokenMap } from "../context/TokenList";
-import { useMint, useOwnedTokenAccount } from "../context/Token";
-import { DEX_PID } from "../utils/pubkeys";
+import { Button, Dialog, DialogContent, IconButton, Link, makeStyles, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
+import { Close } from '@material-ui/icons';
+import { BN } from '@project-serum/anchor';
+import { OpenOrders } from '@project-serum/serum';
+import { MintInfo } from '@solana/spl-token';
+import { PublicKey } from '@solana/web3.js';
+import { useEffect, useMemo, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { useDexContext, useMarket, useOpenOrders } from '../context/Dex';
+import { useMint, useOwnedTokenAccount } from '../context/Token';
+import { useTokenMap } from '../context/TokenList';
+import { DEX_PID } from '../utils/pubkeys';
 
 const useStyles = makeStyles((theme) => ({
   table: {},
@@ -89,13 +73,27 @@ function OpenOrdersAccounts() {
         <TableHead>
           <TableRow>
             <TableCell>Market</TableCell>
-            <TableCell align="center">Open Orders Account</TableCell>
-            <TableCell align="center">Base Used</TableCell>
-            <TableCell align="center">Base Free</TableCell>
-            <TableCell align="center">Quote Used</TableCell>
-            <TableCell align="center">Quote Free</TableCell>
-            <TableCell align="center">Settle</TableCell>
-            <TableCell align="center">Close</TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.account" />
+            </TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.baseUsed" />
+            </TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.baseFree" />
+            </TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.quoteUsed" />
+            </TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.quoteFree" />
+            </TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.settle" />
+            </TableCell>
+            <TableCell align="center">
+              <FormattedMessage id="Swap.accountTable.close" />
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -236,7 +234,7 @@ function OpenOrdersRow({
       </TableCell>
       <TableCell align="center">
         <Button color="primary" disabled={settleDisabled} onClick={settleFunds}>
-          Settle
+          <FormattedMessage id="Swap.action.settle" />
         </Button>
       </TableCell>
       <TableCell align="center">
@@ -245,7 +243,7 @@ function OpenOrdersRow({
           onClick={_closeOpenOrders}
           className={styles.closeAccount}
         >
-          Close
+          <FormattedMessage id="Swap.action.close" />
         </Button>
       </TableCell>
     </TableRow>
