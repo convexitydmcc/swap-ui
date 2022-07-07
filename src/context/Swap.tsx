@@ -5,11 +5,12 @@ import * as assert from 'assert';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAsync } from 'react-async-hook';
 import { SRM_MINT, USDC_MINT, USDT_MINT } from '../utils/pubkeys';
-import { FEE_MULTIPLIER, useDexContext, useFairRoute, useRouteVerbose } from './Dex';
+import { FEE_MULTIPLIER, useBbo, useDexContext, useFairRoute, useRoute, useRouteVerbose } from './Dex';
 import { useMint, useOwnedTokenAccount } from './Token';
 import { SPL_REGISTRY_SOLLET_TAG, SPL_REGISTRY_WORM_TAG, useTokenListContext } from './TokenList';
 
 const DEFAULT_SLIPPAGE_PERCENT = 1;
+const PRICE_PRECISION_MIN = 0.0001;
 
 export type SwapContext = {
   // Mint being traded from. The user must own these tokens.
@@ -83,10 +84,17 @@ export function SwapContextProvider(props: {
   const tokenAccount = useOwnedTokenAccount(fromMint);
   const mintAccount = useMint(fromMint);
   const [isAutoMaxApplied, setIsAutoMaxApplied] = useState(!props.isAutoMax);
+  const bestSlippage = useBestSlippage(fromMint, toMint);
 
   const referral = props.referral;
 
   assert.ok(slippage >= 0);
+
+  useEffect(() => {
+    if (bestSlippage >= 0) {
+      setSlippage(bestSlippage);
+    }
+  }, [bestSlippage]);
 
   useEffect(() => {
     if (!fair || !fromMint || !tokenAccount || !mintAccount) {
@@ -179,6 +187,18 @@ function _useSwapFair(
   const fairRoute = useFairRoute(fromMint, toMint);
   const fair = fairOverride === null ? fairRoute : fairOverride;
   return fair;
+}
+
+function useBestSlippage(fromMint: PublicKey, toMint: PublicKey) {
+  const route = useRoute(fromMint, toMint);
+  const bbo = useBbo(route ? route[0] : undefined);
+  if (!bbo?.bestBid) {
+    return DEFAULT_SLIPPAGE_PERCENT;
+  }
+
+  const priceDiff = bbo.bestBid / (bbo.bestBid - PRICE_PRECISION_MIN);
+  const bestSlippage = Math.floor((priceDiff - 1) * 100);
+  return Math.max(bestSlippage, DEFAULT_SLIPPAGE_PERCENT);
 }
 
 // Returns true if the user can swap with the current context.
